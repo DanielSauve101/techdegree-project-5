@@ -15,17 +15,17 @@ class Entry(Model):
 
     class Meta:
         database = DATABASE
-        order_by = ('-date',)
+        order_by = ('date',)
 
     @classmethod
-    def create_entry(cls, title, time, learned, resources, date):
+    def create_entry(cls, title, date, time, learned, resources):
         with DATABASE.transaction():
             cls.create(
                 title=title,
+                date=date,
                 time=time,
                 learned=learned,
-                resources=resources,
-                date=date
+                resources=resources
             )
 
 

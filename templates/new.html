@@ -1,17 +1,27 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+
 <section>
   <div class="container">
     <div class="new-entry">
       <h2>New Entry</h2>
         <form method='POST' action=''>
+          {% if form.errors %}
+            <ul class="errors">
+              {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                {% for error in field_errors %}
+                  <li>{{ form[field_name].label }}: {{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          {% endif %}
           {{ form.hidden_tag() }}
           <label for="title">Title</label>
           <input id="title" type="text" name="title"><br>
           <label for="date">Date</label>
-          <input id="date" type="date" name="Date"><br>
-          <label for="time-spent"> Time Spent</label>
+          <input id="date" type="date" name="date"><br>
+          <label for="time-spent">Time Spent</label>
           <input id="time-spent" type="text" name="time"><br>
           <label for="what-i-learned">What I Learned</label>
           <textarea id="what-i-learned" rows="5" name="learned"></textarea>
@@ -23,4 +33,5 @@
       </div>
     </div>
 </section>
+
 {% endblock %}

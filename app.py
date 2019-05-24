@@ -26,10 +26,20 @@ def new_entry():
     return render_template('new.html', form=form)
 
 
+@app.route('/entries/<id>')
+def entry_view(id):
+    try:
+        entry = models.Entry.select().where(
+            models.Entry.id == id).get()
+    except models.DoesNotExist:
+        abort(404)
+    return render_template('detail.html', entry=entry)
+
+
 @app.route('/')
 @app.route('/entries')
 def index():
-    entries = models.Entry.select().limit(25)
+    entries = models.Entry.select().order_by(models.Entry.date.desc())
     return render_template('index.html', entries=entries)
 
 
