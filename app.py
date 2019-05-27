@@ -82,7 +82,7 @@ def logout():
 @app.route('/entries/new', methods=('GET', 'POST'))
 @login_required
 def new_entry():
-    form = forms.NewEntryForm()
+    form = forms.EntryForm()
     if form.validate_on_submit():
         flash("You have successfully added a new entry!", "success")
         models.Entry.create(
@@ -98,13 +98,41 @@ def new_entry():
 
 
 @app.route('/entries/<id>')
-def entry_view(id):
+def view_entry(id):
     try:
-        entry = models.Entry.select().where(
-            models.Entry.id == id).get()
+        entry = models.Entry.select().where(models.Entry.id == id).get()
     except models.DoesNotExist:
         abort(404)
     return render_template('detail.html', entry=entry)
+
+
+@app.route('/entries/<id>/edit', methods=('GET', 'POST'))
+@login_required
+def edit_entry(id):
+    existing_entry = models.Entry.select().where(models.Entry.id == id).get()
+    form = forms.EntryForm()
+    if form.validate_on_submit():
+        flash("You have successfully edited your entry!", "success")
+        update_entry = models.Entry.update(
+            user=g.user._get_current_object(),
+            title=form.title.data,
+            date=form.date.data,
+            time=form.time.data,
+            learned=form.learned.data,
+            resources=form.resources.data
+        ).where(models.Entry.id == id)
+        update_entry.execute()
+        return redirect(url_for('index'))
+    return render_template('edit.html', form=form, entry=existing_entry)
+
+
+@app.route('/entries/<id>/delete')
+@login_required
+def delete_entry(id):
+    delete_entry = models.Entry.select().where(models.Entry.id == id).get()
+    delete_entry.delete_instance()
+    flash("You have successfully deleted the entry")
+    return redirect(url_for('index'))
 
 
 @app.route('/')

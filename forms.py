@@ -39,7 +39,7 @@ class LoginForm(Form):
     password = PasswordField('Password', validators=[DataRequired()])
 
 
-class NewEntryForm(Form):
+class EntryForm(Form):
     title = StringField('Title', validators=[DataRequired()])
     date = DateField('Date', validators=[InputRequired()])
     time = IntegerField('Time Spent', validators=[DataRequired()])
