@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<section>
+  <div class="container">
+    <div class="new-entry">
+      <h2>Register</h2>
+        <form method='POST' action=''>
+          {% if form.errors %}
+            <ul class="errors">
+              {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                {% for error in field_errors %}
+                  <li>{{ form[field_name].label }}: {{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+          {{ form.hidden_tag() }}
+          <label for="username">Username</label>
+          <input id="title" type="text" name="username"><br>
+          <label for="password">Password</label>
+          <input id="password" type="password" name="password"><br>
+          <label for="password">Confirm Password</label>
+          <input id="password" type="password" name="password2"><br>
+          <input type="submit" value="Register" class="button">
+          <a href="{{ url_for('index') }}" class="button button-secondary">Cancel</a>
+        </form>
+      </div>
+    </div>
+</section>
+{% endblock %}
