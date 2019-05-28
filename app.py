@@ -40,11 +40,19 @@ def after_request(response):
     return response
 
 
+def get_entry(id):
+    try:
+        entry = models.Entry.select().where(models.Entry.id == id).get()
+    except models.DoesNotExist:
+        abort(404)
+    return entry
+
+
 @app.route('/register', methods=('GET', 'POST'))
 def register():
     form = forms.RegisterForm()
     if form.validate_on_submit():
-        flash("You have registered successfully!", "success")
+        flash("You have registered successfully!")
         models.User.create_user(
             username=form.username.data,
             password=form.password.data
@@ -60,14 +68,14 @@ def login():
         try:
             user = models.User.get(models.User.username == form.username.data)
         except models.DoesNotExist:
-            flash("You're username or password does not match.", "error")
+            flash("You're username or password does not match.")
         else:
             if check_password_hash(user.password, form.password.data):
                 login_user(user)
-                flash("You are logged in!", "success")
+                flash("You are logged in!")
                 return redirect(url_for('index'))
             else:
-                flash("You're email or password does not match.", "error")
+                flash("You're email or password does not match.")
     return render_template('login.html', form=form)
 
 
@@ -84,7 +92,7 @@ def logout():
 def new_entry():
     form = forms.EntryForm()
     if form.validate_on_submit():
-        flash("You have successfully added a new entry!", "success")
+        flash("You have successfully added a new entry!")
         models.Entry.create(
             user=g.user._get_current_object(),
             title=form.title.data,
@@ -99,20 +107,17 @@ def new_entry():
 
 @app.route('/entries/<id>')
 def view_entry(id):
-    try:
-        entry = models.Entry.select().where(models.Entry.id == id).get()
-    except models.DoesNotExist:
-        abort(404)
+    entry = get_entry(id)
     return render_template('detail.html', entry=entry)
 
 
 @app.route('/entries/<id>/edit', methods=('GET', 'POST'))
 @login_required
 def edit_entry(id):
-    existing_entry = models.Entry.select().where(models.Entry.id == id).get()
+    existing_entry = get_entry(id)
     form = forms.EntryForm()
     if form.validate_on_submit():
-        flash("You have successfully edited your entry!", "success")
+        flash("You have successfully edited your entry!")
         update_entry = models.Entry.update(
             user=g.user._get_current_object(),
             title=form.title.data,
@@ -129,7 +134,7 @@ def edit_entry(id):
 @app.route('/entries/<id>/delete')
 @login_required
 def delete_entry(id):
-    delete_entry = models.Entry.select().where(models.Entry.id == id).get()
+    delete_entry = get_entry(id)
     delete_entry.delete_instance()
     flash("You have successfully deleted the entry")
     return redirect(url_for('index'))

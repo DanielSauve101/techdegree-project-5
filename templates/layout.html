@@ -17,13 +17,23 @@
                   <a class="logo" href="{{ url_for('index') }}"><i class="material-icons">library_books</i></a>
                   {% if current_user.is_authenticated %}
                   <a class="button icon-right" href="{{ url_for('new_entry') }}"><span>New Entry</span> <i class="material-icons">add</i></a>
-                  <a class="button icon-right" href="{{ url_for('logout') }}"><span>Logout</span> <i class="material-icons">add</i></a>
+                  <a class="button icon-right" href="{{ url_for('logout') }}"><span>Logout</span></a>
                   {% else %}
-                  <a class="button icon-right" href="{{ url_for('register') }}"><span>Register</span> <i class="material-icons">add</i></a>
-                  <a class="button icon-right" href="{{ url_for('login') }}"><span>Login</span> <i class="material-icons">add</i></a>
+                  <a class="button icon-right" href="{{ url_for('register') }}"><span>Register</span></a>
+                  <a class="button icon-right" href="{{ url_for('login') }}"><span>Login</span></a>
                   {% endif %}
                 </div>
             </div>
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul>
+                {% for message in messages %}
+                  <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
         </header>
         {% block content %}{% endblock %}
         <footer>
