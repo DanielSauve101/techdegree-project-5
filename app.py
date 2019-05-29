@@ -41,6 +41,7 @@ def after_request(response):
 
 
 def get_entry(id):
+    """Function to get model object based on id."""
     try:
         entry = models.Entry.select().where(models.Entry.id == id).get()
     except models.DoesNotExist:
@@ -50,6 +51,7 @@ def get_entry(id):
 
 @app.route('/register', methods=('GET', 'POST'))
 def register():
+    """View to show register form and validate data for a new user."""
     form = forms.RegisterForm()
     if form.validate_on_submit():
         flash("You have registered successfully!")
@@ -63,6 +65,7 @@ def register():
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
+    """View to have user login and validate credentials."""
     form = forms.LoginForm()
     if form.validate_on_submit():
         try:
@@ -82,6 +85,7 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+    """View that logs out the user."""
     logout_user()
     flash("You have been logged out successfully!")
     return redirect(url_for('index'))
@@ -90,6 +94,7 @@ def logout():
 @app.route('/entries/new', methods=('GET', 'POST'))
 @login_required
 def new_entry():
+    """View that shows the form to create a new entry and validates data."""
     form = forms.EntryForm()
     if form.validate_on_submit():
         flash("You have successfully added a new entry!")
@@ -107,6 +112,7 @@ def new_entry():
 
 @app.route('/entries/<id>')
 def view_entry(id):
+    """View that shows the details of a selected entry."""
     entry = get_entry(id)
     return render_template('detail.html', entry=entry)
 
@@ -114,6 +120,7 @@ def view_entry(id):
 @app.route('/entries/<id>/edit', methods=('GET', 'POST'))
 @login_required
 def edit_entry(id):
+    """View that allows the user to edit there entry using a form."""
     existing_entry = get_entry(id)
     form = forms.EntryForm()
     if form.validate_on_submit():
@@ -134,6 +141,7 @@ def edit_entry(id):
 @app.route('/entries/<id>/delete')
 @login_required
 def delete_entry(id):
+    """View that allows the user to delete their entry."""
     delete_entry = get_entry(id)
     delete_entry.delete_instance()
     flash("You have successfully deleted the entry")
@@ -143,6 +151,7 @@ def delete_entry(id):
 @app.route('/')
 @app.route('/entries')
 def index():
+    """View that is the home page which shows a list of entries."""
     entries = models.Entry.select().order_by(models.Entry.date.desc())
     return render_template('index.html', entries=entries)
 
